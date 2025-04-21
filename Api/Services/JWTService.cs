@@ -27,13 +27,13 @@ public class JWTService {
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.GivenName, user.FirstName),
             new Claim(ClaimTypes.Surname, user.LastName),
-            new Claim("my own claim name", "this is the value")
+            // new Claim("my own claim name", "this is the value")
         };
 
         var credentials = new SigningCredentials(_jwtKey, SecurityAlgorithms.HmacSha512Signature);
         var tokenDescriptor = new SecurityTokenDescriptor() {
             Subject = new ClaimsIdentity(userClaims),
-            Expires = DateTime.UtcNow.AddDays(int.Parse(_config["JWT:ExpiresInDays`"])),
+            Expires = DateTime.UtcNow.AddDays(int.Parse(_config["JWT:ExpiresInDays"])),
             SigningCredentials = credentials,
             Issuer = _config["JWT:Issuer"],
         };
