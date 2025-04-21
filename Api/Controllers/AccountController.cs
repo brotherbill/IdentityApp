@@ -5,6 +5,7 @@ using Api.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.Controllers;
 
@@ -36,7 +37,27 @@ public class AccountController : ControllerBase {
 
         return Ok(CreateApplicationUserDto(user));
     }
-    
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(RegisterDto model) {
+        if (await CheckEmailExistsAsync(model.Email)) {
+            return BadRequest($"An existing account is using {model.Email}, email address.  Please try with another email address");
+        }
+
+        var userToAdd = new User {
+            FirstName = model.FirstName.Trim().ToLower(),
+            LastName = model.LastName.Trim().ToLower(),
+            UserName = model.Email.Trim().ToLower(),
+            Email = model.Email.Trim().ToLower(),
+            EmailConfirmed = true, // For simplicity, we are confirming the email automatically.  Will fix this later.
+        };
+
+        var result = await _userManager.CreateAsync(userToAdd, model.Password);
+        if (!result.Succeeded) return BadRequest(result.Errors);
+
+        return Ok("Your account has been created, you can login");
+    }
+
     #region Private Helper Methods
 
     private UserDto CreateApplicationUserDto(User user) {
@@ -45,6 +66,10 @@ public class AccountController : ControllerBase {
             LastName = user.LastName,
             JWT = _jwtService.CreateJWT(user),
         };
+    }
+
+    private async Task<bool> CheckEmailExistsAsync(string email) {
+        return await _userManager.Users.AnyAsync(user => user.Email == email.ToLower());
     }
     #endregion
 
