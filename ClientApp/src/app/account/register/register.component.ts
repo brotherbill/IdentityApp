@@ -38,7 +38,11 @@ export class RegisterComponent implements OnInit {
           console.log(response);
         },
         error: error => {
-          console.log(error);
+          if (error.error.errors) {
+            this.errorMessages = error.error.errors;
+          } else {
+            this.errorMessages.push(error.error);
+          }
         }
       })  
     }
