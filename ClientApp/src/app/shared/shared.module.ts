@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { NotFoundComponent } from './components/errors/not-found/not-found.component';
 import { ValidationMessagesComponent } from './components/errors/validation-messages/validation-messages.component';
 import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 
 
@@ -13,10 +15,14 @@ import { RouterModule } from '@angular/router';
   ],
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   exports: [
-    RouterModule
+    RouterModule,
+    ReactiveFormsModule,
+    HttpClientModule
   ]
 })
 export class SharedModule { }
